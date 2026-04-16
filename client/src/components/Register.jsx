@@ -5,10 +5,11 @@ export default function Register() {
     const [email,setEmail]=useState("")
     const [password,setPassword]=useState("")
     const [mobile,setMobile]=useState("")
+    const [vendor,setVendor]=useState(false)
     function handleRegister(e){
         e.preventDefault()
        
-        API.post("/auth/register",{name,email,password,mobile:Number(mobile)})
+        API.post("/auth/register",{name,email,password,mobile:Number(mobile),vendor:Boolean(vendor)})
             .then((res)=>{
                 console.log(res)
                 if(res.status===201){
@@ -57,6 +58,17 @@ export default function Register() {
                             className="form-control" 
                             name="mobile"
                             onChange={(e)=>setMobile(e.target.value)}/>
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="" className="form-label">Join As</label>
+                        <select 
+                            className="form-control" 
+                            name="vendor"
+                            onChange={(e)=>setVendor(e.target.value)}
+                        >
+                            <option value={false}>Customer</option>
+                            <option value={true}>Vendor</option>
+                        </select>
                     </div>
                     <button className='btn btn-success'>Register</button>
                 </form>

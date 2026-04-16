@@ -16,6 +16,10 @@ const userSchema=mongoose.Schema({
     mobile:{
         type:Number,
         required:true
+    },
+    vendor:{
+        type:Boolean,
+        default:false
     }
 },{timestamps:true})
 
