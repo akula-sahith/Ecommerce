@@ -6,8 +6,8 @@ const User= require("../models/User")
 
 router.post("/register",async (req,res)=>{
     try{
-        const {name,email,password,mobile,vendor}=req.body 
-        console.log("----------",name,email,password,mobile,vendor)
+        const {name,email,password,mobile,isVendor}=req.body 
+        console.log("----------",name,email,password,mobile,isVendor)
         const existingUser= await User.findOne({email})
 
         if(existingUser){
@@ -15,7 +15,7 @@ router.post("/register",async (req,res)=>{
         }
         const hashedPassword=await bcrypt.hash(password,10)
         const user=await User.create({
-            name,email,password:hashedPassword,mobile,vendor
+            name,email,password:hashedPassword,mobile,isVendor
         })
         return res.status(201).json({message:"User created successfully"})
     }
@@ -42,7 +42,8 @@ router.post("/login",async (req,res)=>{
                 process.env.JWT_SECRET,
                 {expiresIn:"1d"}
             )
-            return res.status(200).json({"message":"Login Successful","user":user,"token":token})
+            console.log(user.isVendor)
+            return res.status(200).json({"message":"Login Successful","userRole":user.isVendor,"token":token})
         }
     }catch(err){
         return res.status(500).json({"message":"Internal server error"})

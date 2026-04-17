@@ -3,7 +3,8 @@ const router = express.Router()
 const Product = require("../models/Product")
 const User = require("../models/User")
 const upload = require("../middleware/imageMiddleware")
-router.post("/add", upload, async (req, res) => {
+const authMiddleware = require("../middleware/authMiddleware")
+router.post("/add",authMiddleware, upload, async (req, res) => {
     try {
         console.log("🔵 --- REQUEST START ---");
 
@@ -34,9 +35,9 @@ router.post("/add", upload, async (req, res) => {
             return res.status(401).json({ message: "User not found" });
         }
 
-        console.log("👉 user.vendor:", user.vendor);
+        console.log("👉 user.vendor:", user.isVendor);
 
-        if (!user.vendor) {
+        if (!user.isVendor) {
             console.log("❌ Not a vendor");
             return res.status(403).json({ message: "Only vendors can add products" });
         }
@@ -77,4 +78,54 @@ router.post("/add", upload, async (req, res) => {
         return res.status(500).json({ message: err.message });
     }
 });
+
+router.get("/all", async (req, res) => {
+    return res.status(200).json({ message: "Products fetched successfully", products: await Product.find() })
+})
+
+router.get("/vendorStats", authMiddleware,async (req,res)=>{
+    try{
+
+        const userId = req.userId;
+
+        const user = await User.findById(userId)
+
+        if(!user){
+            return res.status(401).json({"message" : "User not Found!"})
+        }
+
+        if(!user.isVendor){
+            return res.status(401).json({"message" : "User is not a vendor"})
+        }
+
+        const products = await Product.find({ vendor: user._id });
+
+        return res.status(200).json({"message" : "Stats Fetched Successfully","products" : products})
+
+    }catch(err){
+        return res.status(500).json({"message" : "Internal Server Error"})
+    }
+})
+
+router.post("/addToCart",authMiddleware,async (req,res)=>{
+    try{
+        const userId = req.userId;
+        const productId = req.body.productId
+        await User.findByIdAndUpdate(userId,{$push:{cart:productId}})
+        return res.status(200).json({"message" : "Product added successfully to the cart"})
+    }catch(err){
+        return res.status(500).json({"message" : "Internal Server Error"})
+    }
+})
+
+router.get("/cartItems",authMiddleware,async (req,res)=>{
+    try{
+       const userId = req.userId
+       const cartItems = await User.findById(userId).populate("cart")
+       console.log(cartItems.cart)
+       return res.status(200).json({"message" : "Cart items fetched successfully","cartItems" : cartItems.cart})
+    }catch(err){
+        return res.status(500).json({"message" : "Internal Server Error"})
+    }
+})
 module.exports = router

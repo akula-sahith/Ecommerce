@@ -17,7 +17,12 @@ const userSchema=mongoose.Schema({
         type:Number,
         required:true
     },
-    vendor:{
+    cart :{
+        type : [mongoose.Schema.Types.ObjectId],
+        ref : "Product",
+        default : []
+    },
+    isVendor:{
         type:Boolean,
         default:false
     }

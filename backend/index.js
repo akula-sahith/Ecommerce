@@ -26,5 +26,5 @@ app.get("/",(req,res)=>{
 })
 app.use("/api/auth",authRoutes)
 app.use("/api/fetch",authMiddleware,fetchRoutes)
-app.use("/api/product",authMiddleware,productRoutes)
+app.use("/api/product",productRoutes)
 app.listen(5000,()=>console.log("server runns on port 5000"))

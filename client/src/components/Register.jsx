@@ -9,7 +9,7 @@ export default function Register() {
     function handleRegister(e){
         e.preventDefault()
        
-        API.post("/auth/register",{name,email,password,mobile:Number(mobile),vendor:Boolean(vendor)})
+        API.post("/auth/register",{name,email,password,mobile:Number(mobile),isVendor:Boolean(vendor)})
             .then((res)=>{
                 console.log(res)
                 if(res.status===201){

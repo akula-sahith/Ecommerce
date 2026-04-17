@@ -23,6 +23,7 @@ export default function Login(){
                     console.log("User data:", user)
                     alert("Login successful")
                     localStorage.setItem("token",res.data.token)
+                    localStorage.setItem("userRole",res.data.userRole)
                     // localStorage.setItem("user",JSON.stringify(user))
                     navigate("/")
                 }else{
